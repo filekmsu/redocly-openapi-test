@@ -1,4 +1,11 @@
 openapi: 3.1.0
+servers:
+  - url: https://{tenant}/api/v1
+    variables:
+      tenant:
+        default: www
+        description: Your tenant id
+  - url: https://example.com/api/v1
 info:
   title: Skyro POS Online API
   version: 0.0.2
