@@ -111,7 +111,7 @@ paths:
                   quantity: 1
                   price: 10000
                   category: "Electronics"
-                  SKU: "123412"
+		  SKU: "123412"
               shopOrderId: "shopOrder123"
               webhookUrl: "https://example.com/webhooks"
               successUrl: "https://example.com/success"
