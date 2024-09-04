@@ -7,10 +7,10 @@ servers:
         description: Your tenant id
   - url: https://example.com/api/v1
 info:
-  title: Skyro POS Online API
+  title: Wataniya POS Online API
   version: 0.0.2
   description: | 
-    # Skyro POS Online API
+    # Wataniya POS Online API
     This API allows partners to create, track, and manage loan applications, facilitating seamless integration of lending services into their stores. 
     Key features include creating loan applications, retrieving application status, canceling obsolete applications, and confirming orders post-documentation. 
     Designed with security and ease of use in mind, the API supports JWT-based authentication, ensuring secure and efficient interactions for all users.
@@ -18,7 +18,7 @@ info:
     # Authentication
     To authenticate, use the clientId and clientSecret provided to you. To obtain a token, make the following request:
     ```shell
-    curl --request POST 'https://online-api.skyro.ph/realms/merchants/protocol/openid-connect/token' \
+    curl --request POST 'https://online-api.wfco.sa/realms/merchants/protocol/openid-connect/token' \
     --header 'Content-Type: application/x-www-form-urlencoded' \
     --data-urlencode 'client_id=<your_client_id>' \
     --data-urlencode 'client_secret=<your_client_secret>' \
@@ -86,8 +86,8 @@ info:
     For assistance or more information about using webhooks, please contact our support team.
 
   x-logo:
-    url: https://www.skyro.ph/images/skyro-logo.svg
-    altText: Skyro
+    url: https://wfco.sa/assets/media/sm-nav-logo.svg
+    altText: Wataniya
 security:
   - Jwt: []
 tags:
@@ -316,7 +316,7 @@ components:
       properties:
         shopId:
           type: string
-          description: id of the shop in Skyro
+          description: id of the shop in Wataniya
         paymentAmount:
           type: number
           description: Payment amount. It may differ from the basket amount (promotional codes, etc.).
@@ -354,7 +354,7 @@ components:
           type: string
       example:
         orderId: "12345"
-        orderFormUrl: "https://online.skyro.ph/orders/12345"
+        orderFormUrl: "https://online.wfco.sa/orders/12345"
     CustomerInfo:
       properties:
         phone:
