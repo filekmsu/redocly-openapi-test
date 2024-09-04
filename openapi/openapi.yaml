@@ -1,5 +1,6 @@
 openapi: 3.0.2
 info:
+  url: http://example.com/contact
   title: Skyro POS Online API
   version: 0.0.2
   description: | 
