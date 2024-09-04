@@ -1,122 +1,429 @@
 openapi: 3.1.0
 info:
-  version: 1.0.0
-  title: Example API
-  termsOfService: https://example.com/terms/
-  contact:
-    name: Contact our support
-    email: contact@example.com
-    url: http://example.com/contact
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Wataniya POS Online API
+  version: 0.0.1
+  description: | 
+    # wataniya POS Online API
+    This API allows partners to create, track, and manage loan applications, facilitating seamless integration of lending services into their stores. 
+    Key features include creating loan applications, retrieving application status, canceling obsolete applications, and confirming orders post-documentation. 
+    Designed with security and ease of use in mind, the API supports JWT-based authentication, ensuring secure and efficient interactions for all users.
+    
+    # Authentication
+    To authenticate, use the clientId and clientSecret provided to you. To obtain a token, make the following request:
+    ```shell
+    curl --request POST 'https://online-api.wataniya.sa/realms/merchants/protocol/openid-connect/token' \
+    --header 'Content-Type: application/x-www-form-urlencoded' \
+    --data-urlencode 'client_id=<your_client_id>' \
+    --data-urlencode 'client_secret=<your_client_secret>' \
+    --data-urlencode 'grant_type=client_credentials'
+    ```
+    Successful response:
+    ```shell
+    {
+      "access_token": "<your_jwt_access_token>",
+      "expires_in": 3600,
+      "token_type": "Bearer"
+    }
+    ```
+    Use the acquired token when making API calls.
+    The authorization token has a lifespan of 3600 seconds. After this period, the token becomes invalid. To continue your operations, you must obtain a new token.
+    
+    ## Important
+    Do not share your credentials with anyone. It is crucial to keep your credentials confidential and not share it with third parties.
+    If your credentials are compromised, please inform us immediately.
+
+    # Using Webhooks with Our API
+    Webhooks provide a powerful way to respond to events within our system. Here’s how you can set up and use webhooks with our API:
+    
+    ## Step 1: Set Up a Webhook Endpoint
+    Prepare an endpoint on your server that can receive HTTP POST requests.
+    Ensure your endpoint is secure, ideally using HTTPS to protect the data in transit.
+    
+    ## Step 2: Register Your Webhook with Our API
+    Use our dedicated webhook registration endpoint to register your webhook URL.
+    Specify the types of events you want to subscribe to. Our API will send notifications to your endpoint for these events.
+    
+    ## Step 3: Handle Incoming Webhooks
+    When an event occurs, our system will send a POST request to your webhook URL with the event data.
+    Implement logic in your endpoint to handle these incoming webhook notifications appropriately 
+    and incorporate error handling to manage failed or retried webhook deliveries.
+
+    ## Step 4: Secure Your Webhooks
+    Always verify the authenticity of received HTTP notifications:
+    - Request the status of the application through the Info API method. This is also necessary to obtain the current status of the application.
+    - Validate against a known IP address range.
+    
+    ## Step 5: Test Your Webhook Integration
+    Test your webhook implementation thoroughly to ensure it handles all expected events correctly.
+    Check for any delays or issues in the receipt and processing of webhook notifications.
+    
+    Example of webhook message:
+    ```json
+    {"orderId":"66ba5a96-34a4-453f-9619-13867dec695e","status":"APPROVED"}
+    ```
+    You can test your webhook endpoint by executing the following request:
+    ```shell
+    curl -X 'POST' '<your_webhookUrl>' 
+    -H 'accept: application/json' 
+    -H 'content-type: application/json' 
+    -d $'{"orderId":"66ba5a96-34a4-453f-9619-13867dec695e","status":"APPROVED"}'
+    ```
+    ## Best Practices:
+    
+    Keep your webhook endpoint responsive. Slow responses can lead to timeouts and retries from our server.
+    Log webhook activities for debugging and auditing purposes.
+    Regularly review and update your webhook configurations as needed.
+    Note:
+    
+    Detailed information about the webhook payload structure and available events can be found in our API documentation.
+    For assistance or more information about using webhooks, please contact our support team.
+
   x-logo:
-    url: 'https://redocly.github.io/openapi-template/logo.png'
-    altText: OpenAPI example logo
-  description: >
-    This is an **example** API to demonstrate features of the OpenAPI
-    specification.
-
-    # Introduction
-
-    This API definition is intended to to be a good starting point for
-    describing your API in [OpenAPI/Swagger
-    format](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md).
-
-    It also demonstrates features of the
-    [create-openapi-repo](https://github.com/Redocly/create-openapi-repo) tool
-    and the [Redoc](https://github.com/Redocly/Redoc) documentation engine. Beyond
-    the standard OpenAPI syntax, we use a few 
-    [vendor extensions](https://github.com/Redocly/Redoc/blob/main/docs/redoc-vendor-extensions.md).
-
-    # OpenAPI Specification
-
-    The goal of The OpenAPI Specification is to define a standard, language-agnostic interface to REST APIs which
-    allows both humans and computers to discover and understand the capabilities
-    of the service without access to source
-    code, documentation, or through network traffic inspection. When properly
-    defined via OpenAPI, a consumer can 
-    understand and interact with the remote service with a minimal amount of
-    implementation logic. Similar to what
-    interfaces have done for lower-level programming, OpenAPI removes the
-    guesswork in calling the service.
-externalDocs:
-  description: "Find out how to create a GitHub repo for your OpenAPI definition."
-  url: 'https://github.com/Redocly/create-openapi-repo'
+    url: https://wfco.sa/assets/media/sm-nav-logo.svg
+    altText: wataniya
+security:
+  - Jwt: []
 tags:
-  - name: Echo
-    description: "Example echo operations."
-  - name: User
-    description: "Example actions on user accounts."
-  - name: Admin
-    description: "Example operations reserved for administrators."
-  - name: Info
-    description: "Example operations for retrieving information."
-  - name: Tag
-    description: "This is a tag description."
-x-tagGroups:
-  - name: General
-    tags:
-      - User
-      - Info
-      - Echo
-  - name: Administration
-    tags:
-      - Admin
-servers:
-  - url: https://{tenant}/api/v1
-    variables:
-      tenant:
-        default: www
-        description: Your tenant id
-  - url: https://example.com/api/v1
+  - name: Partners
 paths:
-  '/users/{username}':
-    $ref: 'paths/users_{username}.yaml'
-  '/user':
-    $ref: 'paths/user.yaml'
-  '/user/list':
-    $ref: 'paths/user-status.yaml'
-  /pathItem:
-    $ref: paths/pathItem.yaml
-  /pathItemWithExamples:
-    $ref: paths/pathItemWithExamples.yaml
-  '/echo':
-    $ref: 'paths/echo.yaml'
-components:
-  securitySchemes:
-    main_auth:
-      description: "Example description text of the OAuth2 scheme."
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: http://example.com/api/oauth/dialog
-          scopes:
-            'read:users': read user info
-            'write:users': modify or remove users
-    api_key:
-      description: "Example description text of the API key scheme."
-      type: apiKey
-      in: header
-      name: api_key
-    basic_auth:
-      type: http
-      scheme: basic
-webhooks:
-  userInfo:
+  /partners/api/v1/orders:
     post:
-      summary: New user webhook
-      description: "Information about a new user in the system."
-      operationId: userInfo
       tags:
-        - Info
+        - Partners
+      operationId: createOrder
+      summary: create order
+      description: |
+          Used for creating order 
+          If you invoke this method with the same order details, including its number in your system (order-id), 
+          a new order will not be created. You will receive an id of the order created before
       requestBody:
+        description: order request
+        required: true
         content:
           application/json:
             schema:
-              $ref: 'components/schemas/User.yaml'
+              $ref: '#/components/schemas/OrderRequest'
+            example:
+              shopId: "shop123"
+              paymentAmount: 10000
+              items:
+                - name: "Laptop"
+                  quantity: 1
+                  price: 10000
+                  category: "Electronics"
+                  SKU: "123412"
+              shopOrderId: "shopOrder123"
+              webhookUrl: "https://example.com/webhooks"
+              successUrl: "https://example.com/success"
+              failUrl: "https://example.com/fail"
+              cancelUrl: "https://example.com/cancel"
+              customer:
+                phone: "+1234567890"
+                name: "John"
+                surname: "Doe"
+                middleName: "A."
+                email: "john.doe@example.com"
       responses:
         '200':
-          description: "Successfully retrieved information about a new user."
-      security:
-        - api_key: []
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '400':
+          description: invalid request
+        '401':
+          description: invalid credentials
+        '403':
+          description: permission denied
+        '422':
+          description: request can't be proceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /partners/api/v1/order/status:
+    post:
+      tags:
+        - Partners
+      operationId: getOrderStatus
+      summary: get status of order
+      description: |
+        The method helps to retrieve the current status of the order. 
+        You can use it separately or in combination with webhook notifications. 
+        This will accelerate the processing of the order on your side. 
+        Use this method if a webhook has not been received within an 24 hours after creating the order.
+      parameters:
+        - name: orderId
+          in: query
+          description: order id
+          required: true
+          schema:
+            type: string
+          example: "12345"
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderStatus'
+              example:
+                orderId: "12345"
+                status: "APPROVED"
+        '400':
+          description: invalid request
+        '401':
+          description: invalid credentials
+        '403':
+          description: permission denied
+        '422':
+          description: request can't be proceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /partners/api/v1/orders/cancel:
+    post:
+      tags:
+        - Partners
+      operationId: cancelOrder
+      summary: cancel order
+      description: |
+        The method is used to cancel an order if it becomes obsolete. 
+        For example, this method should be used if the buyer has already signed the credit agreement but the goods or services are not available. 
+        Or if the buyer has contacted the store and requested the cancellation of the order.
+        
+        Once you cancel the order, it cannot be restored, and you will have to fill out a new one. 
+        If you have automatic order confirmation enabled, you won't be able to cancel the order after the buyer has signed the documents. 
+        In that case, you'll need to process a refund.
+      parameters:
+        - name: orderId
+          in: query
+          description: order id
+          required: true
+          schema:
+            type: string
+          example: "12345"
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderStatus'
+              example:
+                orderId: "12345"
+                status: "CANCELLED"
+        '400':
+          description: invalid request
+        '401':
+          description: invalid credentials
+        '403':
+          description: permission denied
+        '422':
+          description: request can't be proceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /partners/api/v1/orders/confirm:
+    post:
+      tags:
+        - Partners
+      operationId: confirmOrder
+      summary: confirm order
+      description: | 
+        The method is used to confirm the validity of the order after the buyer has signed the documents. 
+        After the confirmation of the order, the funds will be transferred to the merchant's account.
+      parameters:
+        - name: orderId
+          in: query
+          description: order id
+          required: true
+          schema:
+            type: string
+          example: "12345"
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderStatus'
+              example:
+                orderId: "12345"
+                status: "CANCELLED"
+        '400':
+          description: invalid request
+        '401':
+          description: invalid credentials
+        '403':
+          description: permission denied
+        '422':
+          description: request can't be proceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    Jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    OrderRequest:
+      description: order request
+      required:
+        - shopId
+        - paymentAmount
+        - items
+      properties:
+        shopId:
+          type: string
+          description: id of the shop in Wataniya
+        paymentAmount:
+          type: number
+          description: Payment amount. It may differ from the basket amount (promotional codes, etc.).
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+        shopOrderId:
+          type: string
+          description: order id in merchant system
+        webhookUrl:
+          type: string
+          description: url for webhooks
+        successUrl:
+          type: string
+          description: url for redirect when loan issue is successfully completed
+        failUrl:
+          type: string
+          description: url for redirect when loan issue is rejected
+        cancelUrl:
+          type: string
+          description: url for redirect when loan issue is cancelled
+        customer:
+          $ref: '#/components/schemas/CustomerInfo'
+    OrderResponse:
+      required:
+        - orderId
+        - orderFormUrl
+      properties:
+        orderId:
+          description: ID of created order
+          type: string
+        orderFormUrl:
+          description: URL with order form
+          type: string
+      example:
+        orderId: "12345"
+        orderFormUrl: "https://online.wataniya.sa/orders/12345"
+    CustomerInfo:
+      properties:
+        phone:
+          type: string
+        name:
+          type: string
+        surname:
+          type: string
+        middleName:
+          type: string
+        email:
+          type: string
+    Item:
+      required:
+        - name
+        - quantity
+        - price
+      properties:
+        name:
+          type: string
+          description: name of item
+        quantity:
+          type: integer
+          description: quantity of items
+        price:
+          type: number
+          description: price per item
+        category:
+          type: string # TODO should be required or enum?
+          description: category of item
+        imageUrl:
+          type: string
+          description: URL to the item image. We will use this URL for showing item preview on the calculator page
+          example: http://example.com/item.svg
+    OrderStatus:
+      required:
+        - orderId
+        - status
+      properties:
+        orderId:
+          type: string
+          description: order id
+        status:
+          description: status of order
+          type: string
+          enum:
+            - NEW
+            - IN_PROGRESS
+            - APPROVED
+            - REJECTED
+            - CANCELLED
+	    - SIGNED
+            - FINISHED
+    ErrorDescription:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+        code:
+          type: string
+          description: Error code
+    ErrorResponse:
+      required:
+        - error
+        - traceId
+      type: object
+      properties:
+        traceId:
+          type: string
+          description: Trace identifier
+          example: 41167246b0807ba2d2a1b1690e0bc585
+        processingTime:
+          type: string
+          description: Request processing time (milliseconds)
+          example: 10ms
+        error:
+          $ref: '#/components/schemas/ErrorDescription'
