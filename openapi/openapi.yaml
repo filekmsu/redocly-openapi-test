@@ -480,12 +480,12 @@ components:
             - APPROVED
             - REJECTED
             - FINISHED
-          isPurchaseOrderCreated:
-            type: boolean
-            description: Customer confirmed choice his order
-          isDeliveryConfirmed:
-            type: boolean
-            description: Merchant confirmed delivery
+        isPurchaseOrderCreated:
+          type: boolean
+          description: Customer confirmed choice his order
+        isDeliveryConfirmed:
+          type: boolean
+          description: Merchant confirmed delivery
     ErrorDescription:
       type: object
       properties:
