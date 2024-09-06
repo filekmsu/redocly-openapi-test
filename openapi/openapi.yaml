@@ -44,8 +44,8 @@ info:
     The payment has been approved and the contract is waiting signing
     ## REJECTED
     The payment was not approved; the order cannot proceed.
-    ## CANCELLED
-    The order has been cancelled, either by the customer or the system.
+    ## CANCELED
+    The order has been canceled, either by the customer or the system.
     ## SIGNED
     The order is confirmed and contract is signed
     ## CONFIRMED
@@ -105,7 +105,7 @@ info:
 security:
   - Jwt: []
 tags:
-  - name: Partner connect
+  - name: Partners
 paths:
   /partners/api/v1/orders:
     post:
@@ -249,7 +249,7 @@ paths:
                 $ref: '#/components/schemas/OrderStatus'
               example:
                 orderId: "66ba5a96-34a4-453f-9619-13867dec695e"
-                status: "CANCELLED"
+                status: "CANCELED"
         '400':
           description: invalid request
         '401':
@@ -406,7 +406,7 @@ components:
           description: url for redirect when loan issue is rejected
         cancelUrl:
           type: string
-          description: url for redirect when loan issue is cancelled
+          description: url for redirect when loan issue is canceled
         customer:
           $ref: '#/components/schemas/CustomerInfo'
     OrderResponse:
@@ -476,7 +476,7 @@ components:
             - IN_PROGRESS
             - APPROVED
             - REJECTED
-            - CANCELLED
+            - CANCELED
             - SIGNED
             - CONFIRMED
             - REFUNDED
