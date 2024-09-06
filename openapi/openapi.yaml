@@ -1,18 +1,13 @@
 openapi: 3.1.0
 servers:
-  - url: https://{tenant}/api/v1
-    variables:
-      tenant:
-        default: www
-        description: Your tenant id
   - url: https://example.com/api/v1
 info:
-  title: Wataniya POS Online API
+  title: Wataniya Partner Connect API
   version: 0.0.2
   description: | 
-    # Wataniya POS Online API
+    # Wataniya  Partner Connect API
     This API allows partners to create, track, and manage loan applications, facilitating seamless integration of lending services into their stores. 
-    Key features include creating loan applications, retrieving application status, canceling obsolete applications, and confirming orders post-documentation. 
+    Key features include creating loan applications, retrieving application status, canceling obsolete applications, and confirming delivery of items. 
     Designed with security and ease of use in mind, the API supports JWT-based authentication, ensuring secure and efficient interactions for all users.
     
     # Authentication
@@ -101,7 +96,7 @@ paths:
       summary: create order
       description: |
           Used for creating order 
-          If you invoke this method with the same order details, including its number in your system (order-id), 
+          If you invoke this method with the same order details, including its number in your system (shopOrderId), 
           a new order will not be created. You will receive an id of the order created before
       requestBody:
         description: order request
@@ -124,7 +119,8 @@ paths:
               failUrl: "https://example.com/fail"
               cancelUrl: "https://example.com/cancel"
               customer:
-                phone: "+1234567890"
+                phone: "+966510422512"
+                customerIdNumber: "2551758135"
                 name: "John"
                 surname: "Doe"
                 middleName: "A."
@@ -281,6 +277,57 @@ paths:
               example:
                 orderId: "12345"
                 status: "CANCELLED"
+        '400':
+          description: invalid request
+        '401':
+          description: invalid credentials
+        '403':
+          description: permission denied
+        '422':
+          description: request can't be proceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+  /partners/api/v1/orders/refund:
+    post:
+      tags:
+        - Partners
+      operationId: refundOrder
+      summary: refung order
+      description: |
+        
+        Method for making a return on an order
+        For example, this method should be used if the buyer has already signed the agreement and got items.
+        Wataniya disbursed money to merchant.
+        But customer wanted to return items and cancel agreement after several days
+        
+        In that case, you'll need to process a refund.
+      parameters:
+        - name: orderId
+          in: query
+          description: order id
+          required: true
+          schema:
+            type: string
+          example: "12345"
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderStatus'
+              example:
+                orderId: "12345"
+                status: "REFUNDED"
         '400':
           description: invalid request
         '401':
