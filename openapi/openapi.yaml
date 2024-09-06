@@ -36,22 +36,18 @@ info:
     # Online Status Flow
     List os statuses for order
 
-    ## NEW
+    ### NEW
     The order has been placed but not yet processed.
-    ## IN_PROGRESS
+    ### IN_PROGRESS
     The order is being reviewed or processed for payment approval. # TODO should be required or enum?
-    ## APPROVED
+    ### APPROVED
     The payment has been approved and the contract is waiting signing
-    ## REJECTED
+    isPurchaseOrderCreated - flag
+    isDeliveryConfirmed - flag
+    ### REJECTED
     The payment was not approved; the order cannot proceed.
-    ## CANCELED
-    The order has been canceled, either by the customer or the system.
-    ## SIGNED
-    The order is confirmed and contract is signed
-    ## CONFIRMED
-    The delivery of order was comfirmed from merchat
-    ## REFUNDED
-    A refund has been issued for the order.
+    ### FINISHED
+    Customer got delivery, Wataniya disbursed money to merchant
 
     # Using Webhooks with Our API
     Webhooks provide a powerful way to respond to events within our system. Here’s how you can set up and use webhooks with our API:
@@ -199,6 +195,8 @@ paths:
               example:
                 orderId: "66ba5a96-34a4-453f-9619-13867dec695e"
                 status: "APPROVED"
+                isPurchaseOrderCreated: false
+                isDeliveryConfirmed: false
         '400':
           description: invalid request
         '401':
@@ -249,7 +247,8 @@ paths:
                 $ref: '#/components/schemas/OrderStatus'
               example:
                 orderId: "66ba5a96-34a4-453f-9619-13867dec695e"
-                status: "CANCELED"
+                status: "REJECTED"
+                
         '400':
           description: invalid request
         '401':
@@ -295,7 +294,9 @@ paths:
                 $ref: '#/components/schemas/OrderStatus'
               example:
                 orderId: "66ba5a96-34a4-453f-9619-13867dec695e"
-                status: "CONFIRMED"
+                status: "APPROVED"
+                isPurchaseOrderCreated: true
+                isDeliveryConfirmed: true
         '400':
           description: invalid request
         '401':
@@ -348,7 +349,7 @@ paths:
                 $ref: '#/components/schemas/OrderStatus'
               example:
                 orderId: "66ba5a96-34a4-453f-9619-13867dec695e"
-                status: "REFUNDED"
+                status: "FINISHED"
         '400':
           description: invalid request
         '401':
@@ -464,6 +465,8 @@ components:
       required:
         - orderId
         - status
+        - isPurchaseOrderCreated
+        - isDeliveryConfirmed
       properties:
         orderId:
           type: string
@@ -476,10 +479,13 @@ components:
             - IN_PROGRESS
             - APPROVED
             - REJECTED
-            - CANCELED
-            - SIGNED
-            - CONFIRMED
-            - REFUNDED
+            - FINISHED
+          isPurchaseOrderCreated:
+            type: boolean
+            description: Customer confirmed choice his order
+          isDeliveryConfirmed:
+            type: boolean
+            description: Merchant confirmed delivery
     ErrorDescription:
       type: object
       properties:
