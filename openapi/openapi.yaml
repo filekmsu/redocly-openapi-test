@@ -29,6 +29,25 @@ info:
     ```
     Use the acquired token when making API calls.
     The authorization token has a lifespan of 3600 seconds. After this period, the token becomes invalid. To continue your operations, you must obtain a new token.
+
+    # Online Status Flow
+
+    ## NEW
+    The order has been placed but not yet processed.
+    ## IN_PROGRESS
+    The order is being reviewed or processed for payment approval. # TODO should be required or enum?
+    ## APPROVED
+    The payment has been approved and the contract is waiting signing
+    ## REJECTED
+    The payment was not approved; the order cannot proceed.
+    ## CANCELLED
+    The order has been cancelled, either by the customer or the system.
+    ## SIGNED
+    The order is confirmed and contract is signed
+    ## CONFIRMED
+    The delivery of order was comfirmed from merchat
+    ## REFUNDED
+    A refund has been issued for the order.
     
     ## Important
     Do not share your credentials with anyone. It is crucial to keep your credentials confidential and not share it with third parties.
@@ -86,7 +105,7 @@ info:
 security:
   - Jwt: []
 tags:
-  - name: Partners
+  - name: Partner connect
 paths:
   /partners/api/v1/orders:
     post:
@@ -169,7 +188,7 @@ paths:
           required: true
           schema:
             type: string
-          example: "12345"
+          example: "66ba5a96-34a4-453f-9619-13867dec695e"
       responses:
         '200':
           description: successful operation
@@ -178,7 +197,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/OrderStatus'
               example:
-                orderId: "12345"
+                orderId: "66ba5a96-34a4-453f-9619-13867dec695e"
                 status: "APPROVED"
         '400':
           description: invalid request
@@ -220,7 +239,7 @@ paths:
           required: true
           schema:
             type: string
-          example: "12345"
+          example: "66ba5a96-34a4-453f-9619-13867dec695e"
       responses:
         '200':
           description: successful operation
@@ -229,7 +248,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/OrderStatus'
               example:
-                orderId: "12345"
+                orderId: "66ba5a96-34a4-453f-9619-13867dec695e"
                 status: "CANCELLED"
         '400':
           description: invalid request
@@ -266,7 +285,7 @@ paths:
           required: true
           schema:
             type: string
-          example: "12345"
+          example: "66ba5a96-34a4-453f-9619-13867dec695e"
       responses:
         '200':
           description: successful operation
@@ -275,8 +294,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/OrderStatus'
               example:
-                orderId: "12345"
-                status: "CANCELLED"
+                orderId: "66ba5a96-34a4-453f-9619-13867dec695e"
+                status: "CONFIRMED"
         '400':
           description: invalid request
         '401':
@@ -301,7 +320,7 @@ paths:
       tags:
         - Partners
       operationId: refundOrder
-      summary: refung order
+      summary: refund order
       description: |
         
         Method for making a return on an order
@@ -317,7 +336,9 @@ paths:
           required: true
           schema:
             type: string
-          example: "12345"
+          example: 
+            orderId: "66ba5a96-34a4-453f-9619-13867dec695e"
+            refundAmount: 10000
       responses:
         '200':
           description: successful operation
@@ -326,7 +347,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/OrderStatus'
               example:
-                orderId: "12345"
+                orderId: "66ba5a96-34a4-453f-9619-13867dec695e"
                 status: "REFUNDED"
         '400':
           description: invalid request
@@ -373,7 +394,7 @@ components:
             $ref: '#/components/schemas/Item'
         shopOrderId:
           type: string
-          description: order id in merchant system
+          description: intertnal order id in merchant system
         webhookUrl:
           type: string
           description: url for webhooks
@@ -400,7 +421,7 @@ components:
           description: URL with order form
           type: string
       example:
-        orderId: "12345"
+        orderId: "66ba5a96-34a4-453f-9619-13867dec695e"
         orderFormUrl: "https://online.wfco.sa/orders/12345"
     CustomerInfo:
       properties:
@@ -429,6 +450,9 @@ components:
         price:
           type: number
           description: price per item
+        SKU:
+          type: string
+          description: stock keeping unit
         category:
           type: string # TODO should be required or enum?
           description: category of item
@@ -453,7 +477,9 @@ components:
             - APPROVED
             - REJECTED
             - CANCELLED
-            - FINISHED
+            - SIGNED
+            - CONFIRMED
+            - REFUNDED
     ErrorDescription:
       type: object
       properties:
