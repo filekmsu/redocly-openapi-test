@@ -135,7 +135,7 @@ paths:
               cancelUrl: "https://example.com/cancel"
               customer:
                 phone: "+966510422512"
-                customerIdNumber: "2551758135"
+                customerDocId: "2551758135"
                 name: "John"
                 surname: "Doe"
                 middleName: "A."
@@ -427,6 +427,8 @@ components:
     CustomerInfo:
       properties:
         phone:
+          type: string
+        customerDocId: 
           type: string
         name:
           type: string
