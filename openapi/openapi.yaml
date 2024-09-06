@@ -29,8 +29,12 @@ info:
     ```
     Use the acquired token when making API calls.
     The authorization token has a lifespan of 3600 seconds. After this period, the token becomes invalid. To continue your operations, you must obtain a new token.
+    ## Important
+    Do not share your credentials with anyone. It is crucial to keep your credentials confidential and not share it with third parties.
+    If your credentials are compromised, please inform us immediately.
 
     # Online Status Flow
+    List os statuses for order
 
     ## NEW
     The order has been placed but not yet processed.
@@ -48,10 +52,6 @@ info:
     The delivery of order was comfirmed from merchat
     ## REFUNDED
     A refund has been issued for the order.
-    
-    ## Important
-    Do not share your credentials with anyone. It is crucial to keep your credentials confidential and not share it with third parties.
-    If your credentials are compromised, please inform us immediately.
 
     # Using Webhooks with Our API
     Webhooks provide a powerful way to respond to events within our system. Here’s how you can set up and use webhooks with our API:
