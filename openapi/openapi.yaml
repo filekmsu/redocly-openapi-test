@@ -283,8 +283,6 @@ paths:
         Or if the buyer has contacted the store and requested the cancellation of the order.
         
         Once you cancel the order, it cannot be restored, and you will have to fill out a new one. 
-        If you have automatic order confirmation enabled, you won't be able to cancel the order after the buyer has signed the documents. 
-        In that case, you'll need to process a refund.
       parameters:
         - name: orderId
           in: query
