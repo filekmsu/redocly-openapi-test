@@ -42,8 +42,9 @@ info:
     The order is being reviewed or processed for payment approval. # TODO should be required or enum?
     ### APPROVED
     The payment has been approved and the contract is waiting signing
-    isPurchaseOrderCreated - flag
-    isDeliveryConfirmed - flag
+    - isPurchaseOrderCreated -  Indicates whether a purchase order has been successfully created in the system.
+    - isAgreementSigned - Confirms that the contract and promisory notes between customer and Wataniya have been signed and finalized.
+    - isDeliveryConfirmed - Merchant verifies that the delivery has been completed and acknowledged by the recipient.
     ### REJECTED
     The payment was not approved; the order cannot proceed.
     ### FINISHED
@@ -196,6 +197,7 @@ paths:
                 orderId: "66ba5a96-34a4-453f-9619-13867dec695e"
                 status: "APPROVED"
                 isPurchaseOrderCreated: false
+                isAgreementSigned: false
                 isDeliveryConfirmed: false
         '400':
           description: invalid request
@@ -272,11 +274,11 @@ paths:
     post:
       tags:
         - Partners
-      operationId: confirmOrder
-      summary: confirm order
+      operationId: confirmDelivery
+      summary: confirm delivery
       description: | 
         The method is used to confirm the validity of the order after the buyer has signed the documents. 
-        After the confirmation of the order, the funds will be transferred to the merchant's account.
+        After the confirmation of the delivery, the funds will be transferred to the merchant's account.
       parameters:
         - name: orderId
           in: query
@@ -296,6 +298,7 @@ paths:
                 orderId: "66ba5a96-34a4-453f-9619-13867dec695e"
                 status: "APPROVED"
                 isPurchaseOrderCreated: true
+                isAgreementSigned: true
                 isDeliveryConfirmed: true
         '400':
           description: invalid request
@@ -457,7 +460,7 @@ components:
           type: string
           description: stock keeping unit
         category:
-          type: string # TODO should be required or enum?
+          type: string 
           description: category of item
         imageUrl:
           type: string
@@ -468,6 +471,7 @@ components:
         - orderId
         - status
         - isPurchaseOrderCreated
+        - isAgreementSigned
         - isDeliveryConfirmed
       properties:
         orderId:
@@ -485,6 +489,9 @@ components:
         isPurchaseOrderCreated:
           type: boolean
           description: Customer confirmed choice his order
+        isAgreementSigned:
+          type: boolean
+          description: Customer signed contract and promissory notes
         isDeliveryConfirmed:
           type: boolean
           description: Merchant confirmed delivery
