@@ -38,15 +38,19 @@ info:
 
     ### NEW
     The order has been placed but not yet processed.
+    
     ### IN_PROGRESS
-    The order is being reviewed or processed for payment approval. # TODO should be required or enum?
+    The order is being reviewed or processed for payment approval. 
+    
     ### APPROVED
     The payment has been approved and the contract is waiting signing
-    - isPurchaseOrderCreated -  Indicates whether a purchase order has been successfully created in the system.
+    - isOrderAuthorizated -  Indicates whether a purchase order has been successfully created in the merchant system.
     - isAgreementSigned - Confirms that the contract and promisory notes between customer and Wataniya have been signed and finalized.
-    - isDeliveryConfirmed - Merchant verifies that the delivery has been completed and acknowledged by the recipient.
+    - isDeliveryConfirmed - Merchant verifies that the delivery has been completed and acknowledged by customer.
+    
     ### REJECTED
     The payment was not approved; the order cannot proceed.
+    
     ### FINISHED
     Customer got delivery, Wataniya disbursed money to merchant
 
@@ -196,7 +200,7 @@ paths:
               example:
                 orderId: "66ba5a96-34a4-453f-9619-13867dec695e"
                 status: "APPROVED"
-                isPurchaseOrderCreated: false
+                isOrderAuthorizated: false
                 isAgreementSigned: false
                 isDeliveryConfirmed: false
         '400':
@@ -217,7 +221,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
+                
+  /partners/api/v1/orders/authorize:
+    post:
+      tags:
+        - Partners
+      operationId: authorizeOrder
+      summary: authorize order
+      description: |
+        Merchant is authorising that order is valid. 
+      parameters:
+        - name: orderId
+          in: query
+          description: order id
+          required: true
+          schema:
+            type: string
+          example: "66ba5a96-34a4-453f-9619-13867dec695e"
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderStatus'
+              example:
+                orderId: "66ba5a96-34a4-453f-9619-13867dec695e"
+                status: "APPROVED"
+                isOrderAuthorizated: true
+                isAgreementSigned: false
+                isDeliveryConfirmed: false
+                
+        '400':
+          description: invalid request
+        '401':
+          description: invalid credentials
+        '403':
+          description: permission denied
+        '422':
+          description: request can't be proceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
   /partners/api/v1/orders/cancel:
     post:
       tags:
@@ -297,7 +350,7 @@ paths:
               example:
                 orderId: "66ba5a96-34a4-453f-9619-13867dec695e"
                 status: "APPROVED"
-                isPurchaseOrderCreated: true
+                isOrderAuthorizated: true
                 isAgreementSigned: true
                 isDeliveryConfirmed: true
         '400':
@@ -470,7 +523,7 @@ components:
       required:
         - orderId
         - status
-        - isPurchaseOrderCreated
+        - isOrderAuthorizated
         - isAgreementSigned
         - isDeliveryConfirmed
       properties:
@@ -486,9 +539,9 @@ components:
             - APPROVED
             - REJECTED
             - FINISHED
-        isPurchaseOrderCreated:
+        isOrderAuthorizated:
           type: boolean
-          description: Customer confirmed choice his order
+          description: Merchant confirmed and created purchase order
         isAgreementSigned:
           type: boolean
           description: Customer signed contract and promissory notes
